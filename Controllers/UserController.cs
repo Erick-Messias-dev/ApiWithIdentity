@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UsersApi.Data.Dtos;
 using UsersApi.Models;
+using UsersApi.Services;
+using UsuariosApi.Services;
 
 namespace UsersApi.Controllers;
 
@@ -12,24 +14,23 @@ namespace UsersApi.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private IMapper _mapper;
-    private UserManager<User> _userMenager;
+    private UserService _userService;
 
-    public UserController(IMapper mapper, UserManager<User> userMenager)
+    public UserController(UserService userService)
     {
-        _mapper = mapper;
-        _userMenager = userMenager;
+        _userService = userService;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CadastrarUsuario(CreateUserDto dto)
+    [HttpPost("Register")]
+    public async Task<IActionResult> RegisterUser(CreateUserDto dto)
     {
-        User user = _mapper.Map<User>(dto);
-
-        IdentityResult result = await _userMenager.CreateAsync(user, dto.Password);
-
-        if (result.Succeeded) return Ok("Usuário cadastrado");
-
-        throw new ApplicationException("Falha ao cadastrar usuario!");
+        await  _userService.Register(dto);
+        return Ok(dto);
+    }
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login(LoginUserDto dto)
+    {
+        var token = await _userService.Login(dto);
+        return Ok(token);
     }
 }

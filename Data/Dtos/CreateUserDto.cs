@@ -7,7 +7,6 @@ public class CreateUserDto
     [Required]
     public string UserName { get; set; }
     [Required]
-
     public DateTime DateOfBirth { get; set; }
     [Required]
     [DataType(DataType.Password)]
