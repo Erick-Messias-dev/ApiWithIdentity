@@ -14,6 +14,9 @@ using UsuariosApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var connString = builder.Configuration["ConnectionStrings:UserConnection"];
+
 builder.Services.AddDbContext<UserDbContext>
     (opts =>
     {
@@ -48,7 +51,7 @@ builder.Services.AddAuthentication(opt =>
     opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("dwdhjqw9e677677677uuihnoiej18jkjkjkjlkl9")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["SymmetricSecurityKey"])),
         ValidateAudience = false,
         ValidateIssuer = false,
         ClockSkew = TimeSpan.Zero
@@ -66,9 +69,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
+
 app.UseAuthorization();
 
-app.UseAuthentication();
 
 app.MapControllers();
 
